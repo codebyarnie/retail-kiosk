@@ -1,0 +1,232 @@
+PRODUCT BROWSER APPLICATION SPECIFICATION
+=========================================
+Version: Complete (for session continuity)
+
+================================================================================
+DOMAIN CONTEXT
+================================================================================
+
+Industry: Hardware/DIY retail (screws, tools, materials)
+
+Why this matters for design:
+- Users often don't know exact product names
+- They search by PROBLEM ("what screw for outdoor decking")
+- They search by COMPATIBILITY ("works with impact driver", "fits in drywall")
+- Functional relationships matter more than brand hierarchies
+- Example product types: different kinds of screws, different tools to drive them,
+  different materials to fasten together
+
+This domain is ideal for VectorDB/semantic search because natural language queries
+map to functional product attributes, not just keywords.
+
+================================================================================
+PROJECT OVERVIEW
+================================================================================
+
+Application Type: Product browser (no checkout/payment)
+Primary Interface: Kiosk on Android touchscreen in-store
+Secondary Interface: Web/mobile companion for home use
+Business Model: White-label SaaS for retail clients
+
+Handoff to POS: Application creates lists with product SKUs that POS systems
+recognize. Payment happens outside this application.
+
+================================================================================
+REQUIREMENTS
+================================================================================
+
+Target Users
+------------
+General retail consumers shopping for hardware/DIY products.
+
+Catalog
+-------
+- Size: ~100k products
+- Primary key: SKU
+- Images: URLs in product.json
+- Source: product.json file, updated periodically (frequency TBD)
+- Stock/pricing: future scope
+
+Category Strategy
+-----------------
+DECISION: Functional groupings over brand hierarchy
+
+Rationale: In hardware retail, customers think in terms of tasks and compatibility,
+not brand loyalty. "What screw works for my deck" beats "Show me Spax brand."
+
+Category types:
+- By task/project ("deck building", "drywall installation")
+- By compatibility ("works with X material", "fits Y tool")
+- By property ("corrosion-resistant", "indoor/outdoor")
+
+Implementation: VectorDB auto-clustering + manual overrides for both flexibility
+and control.
+
+Search & Discovery
+------------------
+DECISION: Natural language search via VectorDB
+
+Rationale: Customers describe problems, not product specs. "screws for wet
+bathroom tile" should work as well as "stainless steel #8 x 1.5"
+
+Results display: Grouped by sub-type + AI-curated "best match" with explanation
+
+DECISION: Contextual suggested queries
+
+Rationale: Rather than static "popular searches", suggestions should emerge from
+user's current session—what they've browsed, searched, added to list. Creates
+a guided discovery experience.
+
+Filters: Configurable per context. Kiosk might show fewer filter options than
+full web experience.
+
+Product Relationships
+---------------------
+- Frequently bought together
+- Compatible with (e.g., drill bits that fit this drill)
+- Alternatives (similar but different specs)
+
+================================================================================
+USER LISTS / BASKET
+================================================================================
+
+DECISION: Anonymous/session-based (no login required)
+
+Rationale: Reduce friction. Consumer kiosk users won't create accounts for a
+quick in-store browse.
+
+QR Sync (bi-directional):
+- Kiosk → Phone: User scans QR to save list and continue at home
+- Phone → Kiosk: User shows QR on phone, kiosk loads their prepared list
+
+This enables: research at home, finalize in store (or vice versa).
+
+No payment: Lists hand off to POS via shared product SKUs.
+
+================================================================================
+TECHNICAL ARCHITECTURE
+================================================================================
+
+Frontend Stack
+--------------
+- Framework: React
+- Path to mobile: PWA or React Native later
+- UI: Clean, minimal, brandable (no specific framework mandated)
+
+Backend Model
+-------------
+DECISION: Hybrid (central server + local cache)
+
+Rationale: 
+- Central server: single source of truth, embedding generation, analytics
+- Local cache: offline resilience, fast response, reduces bandwidth
+
+VectorDB
+--------
+DECISION: Qdrant (recommended)
+
+Rationale:
+- Runs embedded (local on kiosk) OR as server (fits hybrid model)
+- Combined vector + filter search (need both for faceted semantic search)
+- Rust-based, low resource footprint (good for Android)
+- Self-hostable, no vendor lock-in
+- Good Python/JS SDKs
+
+Alternatives considered:
+- pgvector: simpler if already using Postgres, less feature-rich
+- Weaviate: good if you need built-in ML modules
+- Pinecone: managed service, vendor lock-in
+
+Embeddings
+----------
+- Generated by: Backend (not expected in product.json)
+- Fields to embed: TBD after reviewing product.json structure
+- Likely: name + description + specs combined into single embedding
+- Single language (no multilingual model needed)
+
+Offline Capability
+------------------
+DECISION: Full inventory cached locally
+
+Rationale: Kiosk must remain useful even if network is down. Error states
+should still allow browsing complete catalog from cache.
+
+================================================================================
+UX / DESIGN
+================================================================================
+
+Entry Points (Home Screen)
+--------------------------
+- Prominent search bar
+- Featured categories/projects
+- Current promotions
+- "What are you working on?" prompt
+- Future: track which entry points drive engagement
+
+Interaction
+-----------
+- Touch: standard gestures (tap, swipe, pinch-zoom)
+- Accessibility: not prioritized for MVP
+- Session timeout: show ads (separate scope, not part of this app)
+
+Error States
+------------
+Must remain useful with cached inventory. If VectorDB unavailable, fallback to
+local cache. Suggest query reformulation if no results.
+
+Visual Design
+-------------
+Clean, simple, minimal. Must be brandable by different retail clients.
+No specific design system mandated.
+
+================================================================================
+ANALYTICS
+================================================================================
+
+Track:
+- Searches performed (query text, results count)
+- Products viewed
+- Products added to list
+- Conversion funnel (browse → search → view → add)
+- Session duration
+- Future: engagement patterns to optimize entry points
+
+================================================================================
+FUTURE SCOPE (NOT IN MVP)
+================================================================================
+
+- Stock/availability integration
+- Dynamic pricing/promotions
+- Native Android app
+- Offline fallback refinement
+- Multi-language support
+- Accessibility compliance
+
+================================================================================
+PENDING DECISIONS / INPUTS NEEDED
+================================================================================
+
+1. Example product.json
+   → Needed to design: embedding strategy, filter facets, schema
+
+2. Category override format
+   → How should manual category assignments be structured?
+
+3. Wireframes
+   → Key screens: home, search results, product detail, list view
+
+4. product.json update frequency
+   → Affects sync strategy
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Receive example product.json
+2. Design embedding strategy (which fields, how combined)
+3. Define extractable filter facets
+4. Design category clustering approach + override schema
+5. Create wireframes for key screens
+6. Define API contract between frontend and backend
+
+================================================================================
