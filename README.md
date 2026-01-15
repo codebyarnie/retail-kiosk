@@ -66,6 +66,15 @@ The Retail Kiosk application follows a modern microservices architecture:
 - Redis 7
 - Qdrant (latest)
 
+## 📚 Documentation
+
+For detailed information about the project, please refer to our comprehensive documentation:
+
+- **[Architecture Documentation](docs/ARCHITECTURE.md)** - System design, component architecture, data flow, and design decisions
+- **[Development Guide](docs/DEVELOPMENT.md)** - Development workflow, coding standards, testing strategies, and best practices
+- **[Backend README](backend/README.md)** - Backend-specific setup and development guide
+- **[Frontend README](frontend/README.md)** - Frontend-specific setup and development guide
+
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
