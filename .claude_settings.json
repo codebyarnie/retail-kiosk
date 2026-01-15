@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure/**)",
+      "Write(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure/**)",
+      "Edit(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure/**)",
+      "Glob(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure/**)",
+      "Grep(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure/**)",
+      "Read(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure\\.auto-claude\\specs\\001-establish-project-foundation-structure/**)",
+      "Write(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure\\.auto-claude\\specs\\001-establish-project-foundation-structure/**)",
+      "Edit(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude\\worktrees\\tasks\\001-establish-project-foundation-structure\\.auto-claude\\specs\\001-establish-project-foundation-structure/**)",
+      "Read(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude/**)",
+      "Write(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude/**)",
+      "Edit(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude/**)",
+      "Glob(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude/**)",
+      "Grep(C:\\Users\\arnol\\PycharmProjects\\retail-kiosk\\.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}

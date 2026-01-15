@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "001-establish-project-foundation-structure",
+  "state": "building",
+  "subtasks": {
+    "completed": 4,
+    "total": 24,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Backend Service Foundation",
+    "id": null,
+    "total": 5
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 6,
+    "started_at": "2026-01-15T16:00:24.113737"
+  },
+  "last_update": "2026-01-15T16:13:11.418087"
+}
