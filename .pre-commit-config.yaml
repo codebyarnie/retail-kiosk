@@ -1,0 +1,260 @@
+# Pre-commit hooks configuration for Retail Kiosk
+# https://pre-commit.com/
+#
+# Installation:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Usage:
+#   pre-commit run --all-files  # Run all hooks on all files
+#   pre-commit run <hook-id>    # Run specific hook
+#   git commit --no-verify      # Skip hooks (use sparingly)
+
+# Automatically update hook versions
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
+fail_fast: false
+minimum_pre_commit_version: '3.0.0'
+
+repos:
+  # =============================================================================
+  # General file quality checks
+  # =============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # File formatting
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+        name: Fix end of files
+      - id: mixed-line-ending
+        name: Fix mixed line endings
+        args: [--fix=lf]
+
+      # Syntax validation
+      - id: check-yaml
+        name: Check YAML syntax
+        args: [--allow-multiple-documents]
+        exclude: ^\.github/workflows/
+      - id: check-toml
+        name: Check TOML syntax
+      - id: check-json
+        name: Check JSON syntax
+      - id: check-xml
+        name: Check XML syntax
+
+      # Git-related checks
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      - id: check-case-conflict
+        name: Check for case conflicts
+      - id: check-added-large-files
+        name: Check for large files
+        args: [--maxkb=1024]
+      - id: no-commit-to-branch
+        name: Prevent commits to main/master
+        args: [--branch, main, --branch, master]
+
+      # Python-specific checks
+      - id: check-ast
+        name: Check Python AST
+        types: [python]
+      - id: check-builtin-literals
+        name: Check builtin literals
+        types: [python]
+      - id: check-docstring-first
+        name: Check docstring first
+        types: [python]
+      - id: debug-statements
+        name: Check for debug statements
+        types: [python]
+      - id: fix-byte-order-marker
+        name: Fix byte order marker
+
+      # Security checks
+      - id: detect-private-key
+        name: Detect private keys
+
+  # =============================================================================
+  # Docker and compose validation
+  # =============================================================================
+  - repo: https://github.com/IamTheFij/docker-pre-commit
+    rev: v3.0.1
+    hooks:
+      - id: docker-compose-check
+        name: Validate docker-compose.yml
+        files: docker-compose\.ya?ml$
+
+  # =============================================================================
+  # Backend Python - Black (code formatter)
+  # =============================================================================
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        name: Format Python code (black)
+        language_version: python3.11
+        args: [--line-length=100]
+        files: ^(backend|worker)/
+
+  # =============================================================================
+  # Backend Python - Ruff (linter and formatter)
+  # =============================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.15
+    hooks:
+      # Linter
+      - id: ruff
+        name: Lint Python code (ruff)
+        args: [--fix, --exit-non-zero-on-fix]
+        files: ^(backend|worker)/
+      # Formatter (complement to black)
+      - id: ruff-format
+        name: Format Python code (ruff)
+        files: ^(backend|worker)/
+
+  # =============================================================================
+  # Backend Python - MyPy (type checker)
+  # =============================================================================
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        name: Type check Python code (mypy)
+        files: ^backend/
+        additional_dependencies:
+          - pydantic>=2.5.0
+          - sqlalchemy>=2.0.0
+          - types-redis
+          - types-requests
+        args:
+          - --config-file=backend/mypy.ini
+          - --python-version=3.11
+      - id: mypy
+        name: Type check Python code (mypy - worker)
+        files: ^worker/
+        additional_dependencies:
+          - pydantic>=2.5.0
+          - celery>=5.3.0
+          - types-redis
+        args:
+          - --python-version=3.11
+          - --ignore-missing-imports
+          - --no-strict-optional
+
+  # =============================================================================
+  # Frontend - Prettier (code formatter)
+  # =============================================================================
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: Format frontend code (prettier)
+        files: ^frontend/
+        types_or: [javascript, jsx, ts, tsx, json, css, scss, markdown, yaml]
+        args:
+          - --config=frontend/.prettierrc
+          - --ignore-path=frontend/.gitignore
+
+  # =============================================================================
+  # Frontend - ESLint (linter)
+  # =============================================================================
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.56.0
+    hooks:
+      - id: eslint
+        name: Lint frontend code (eslint)
+        files: ^frontend/.*\.[jt]sx?$
+        types: [file]
+        args:
+          - --config=frontend/.eslintrc.json
+          - --fix
+          - --max-warnings=0
+        additional_dependencies:
+          - eslint@8.56.0
+          - '@typescript-eslint/parser@6.19.0'
+          - '@typescript-eslint/eslint-plugin@6.19.0'
+          - eslint-plugin-react@7.33.2
+          - eslint-plugin-react-hooks@4.6.0
+          - eslint-plugin-react-refresh@0.4.5
+          - eslint-config-prettier@9.1.0
+
+  # =============================================================================
+  # Markdown linting
+  # =============================================================================
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        name: Lint Markdown files
+        args: [--fix]
+        exclude: ^\.auto-claude/
+
+  # =============================================================================
+  # YAML linting
+  # =============================================================================
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        name: Lint YAML files
+        args:
+          - --strict
+          - --config-data
+          - |
+            {
+              extends: default,
+              rules: {
+                line-length: {max: 120},
+                document-start: disable,
+                truthy: {check-keys: false}
+              }
+            }
+
+  # =============================================================================
+  # Secrets detection
+  # =============================================================================
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        args:
+          - --baseline
+          - .secrets.baseline
+        exclude: |
+          (?x)^(
+            .*\.lock|
+            .*package-lock\.json|
+            .*\.env\.example
+          )$
+
+  # =============================================================================
+  # Commit message linting
+  # =============================================================================
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        name: Check commit message format
+        stages: [commit-msg]
+
+# =============================================================================
+# CI configuration - ensure pre-commit runs in CI
+# =============================================================================
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: develop
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip:
+    # Skip hooks that require local dependencies or take too long
+    - mypy
+    - eslint
+  submodules: false
