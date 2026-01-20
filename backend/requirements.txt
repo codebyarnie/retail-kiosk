@@ -16,6 +16,7 @@ hiredis==2.3.2
 
 # Vector Database
 qdrant-client==1.7.3
+sentence-transformers>=2.2.0
 
 # Celery Integration
 celery==5.3.6
