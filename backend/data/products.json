@@ -1,0 +1,104 @@
+{
+  "products": [
+    {
+      "sku": "DRL-001",
+      "name": "DeWalt 20V MAX Hammer Drill",
+      "description": "Powerful cordless hammer drill for drilling into concrete, brick, and masonry. Features 20V MAX battery system with long runtime.",
+      "short_description": "20V cordless hammer drill for masonry",
+      "price": 199.99,
+      "categories": ["power-tools", "drills"],
+      "image_url": "/images/drl-001.jpg",
+      "attributes": {"voltage": "20V", "brand": "DeWalt", "type": "hammer"}
+    },
+    {
+      "sku": "DRL-002",
+      "name": "Makita 18V LXT Drill Driver",
+      "description": "Compact and lightweight drill driver for everyday drilling and driving tasks. Variable speed trigger for precise control.",
+      "short_description": "18V compact drill driver",
+      "price": 149.99,
+      "categories": ["power-tools", "drills"],
+      "image_url": "/images/drl-002.jpg",
+      "attributes": {"voltage": "18V", "brand": "Makita", "type": "driver"}
+    },
+    {
+      "sku": "SAW-001",
+      "name": "Milwaukee M18 Circular Saw",
+      "description": "7-1/4 inch circular saw with brushless motor for efficient cuts through lumber and plywood. Includes blade guard and dust port.",
+      "short_description": "18V brushless circular saw",
+      "price": 229.99,
+      "categories": ["power-tools", "saws"],
+      "image_url": "/images/saw-001.jpg",
+      "attributes": {"voltage": "18V", "brand": "Milwaukee", "blade_size": "7-1/4 inch"}
+    },
+    {
+      "sku": "SAW-002",
+      "name": "Bosch Jigsaw with T-Shank Blades",
+      "description": "Versatile jigsaw for curved and straight cuts in wood, metal, and plastic. Low vibration design for comfortable use.",
+      "short_description": "Corded jigsaw for precision cuts",
+      "price": 129.99,
+      "categories": ["power-tools", "saws"],
+      "image_url": "/images/saw-002.jpg",
+      "attributes": {"brand": "Bosch", "type": "jigsaw", "corded": true}
+    },
+    {
+      "sku": "HMR-001",
+      "name": "Estwing 16oz Claw Hammer",
+      "description": "Professional grade steel claw hammer with shock-absorbing grip. Perfect for framing and general carpentry work.",
+      "short_description": "16oz steel claw hammer",
+      "price": 34.99,
+      "categories": ["hand-tools", "hammers"],
+      "image_url": "/images/hmr-001.jpg",
+      "attributes": {"weight": "16oz", "brand": "Estwing", "material": "steel"}
+    },
+    {
+      "sku": "HMR-002",
+      "name": "Stanley FatMax Framing Hammer",
+      "description": "Heavy-duty 22oz framing hammer with anti-vibration technology. Milled face for secure nail grip.",
+      "short_description": "22oz framing hammer",
+      "price": 44.99,
+      "categories": ["hand-tools", "hammers"],
+      "image_url": "/images/hmr-002.jpg",
+      "attributes": {"weight": "22oz", "brand": "Stanley", "type": "framing"}
+    },
+    {
+      "sku": "SCR-001",
+      "name": "Klein Tools 11-in-1 Screwdriver",
+      "description": "Multi-bit screwdriver with 11 different tips stored in the handle. Includes Phillips, slotted, square, and Torx bits.",
+      "short_description": "11-in-1 multi-bit screwdriver",
+      "price": 24.99,
+      "categories": ["hand-tools", "screwdrivers"],
+      "image_url": "/images/scr-001.jpg",
+      "attributes": {"brand": "Klein Tools", "bits": 11}
+    },
+    {
+      "sku": "MSR-001",
+      "name": "Stanley 25ft PowerLock Tape Measure",
+      "description": "Professional tape measure with 25 foot blade and blade lock. Wide blade stays rigid for long measurements.",
+      "short_description": "25ft professional tape measure",
+      "price": 19.99,
+      "categories": ["hand-tools", "measuring"],
+      "image_url": "/images/msr-001.jpg",
+      "attributes": {"length": "25ft", "brand": "Stanley"}
+    },
+    {
+      "sku": "SFT-001",
+      "name": "3M WorkTunes Hearing Protector",
+      "description": "Bluetooth hearing protection with AM/FM radio. Noise reduction rating of 24dB for loud work environments.",
+      "short_description": "Bluetooth hearing protection headphones",
+      "price": 54.99,
+      "categories": ["safety", "hearing-protection"],
+      "image_url": "/images/sft-001.jpg",
+      "attributes": {"brand": "3M", "nrr": "24dB", "bluetooth": true}
+    },
+    {
+      "sku": "SFT-002",
+      "name": "Carhartt Insulated Work Gloves",
+      "description": "Durable insulated work gloves with reinforced palm. Water-resistant and touchscreen compatible fingertips.",
+      "short_description": "Insulated touchscreen work gloves",
+      "price": 29.99,
+      "categories": ["safety", "gloves"],
+      "image_url": "/images/sft-002.jpg",
+      "attributes": {"brand": "Carhartt", "insulated": true, "touchscreen": true}
+    }
+  ]
+}
