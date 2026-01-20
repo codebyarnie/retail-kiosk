@@ -56,7 +56,9 @@ export const useListStore = create<ListState>((set, get) => ({
 
   addItem: async (productSku: string, quantity = 1) => {
     const { currentList } = get();
-    if (!currentList) return;
+    if (!currentList) {
+      return;
+    }
 
     set({ isLoading: true, error: null });
     try {
@@ -75,7 +77,9 @@ export const useListStore = create<ListState>((set, get) => ({
 
   removeItem: async (productSku: string) => {
     const { currentList } = get();
-    if (!currentList) return;
+    if (!currentList) {
+      return;
+    }
 
     set({ isLoading: true, error: null });
     try {

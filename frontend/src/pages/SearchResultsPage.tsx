@@ -43,7 +43,7 @@ export function SearchResultsPage() {
       <div className="mb-6">
         {query && (
           <h1 className="text-2xl font-bold text-gray-900">
-            Results for "{query}"
+            Results for &quot;{query}&quot;
           </h1>
         )}
         {results && (

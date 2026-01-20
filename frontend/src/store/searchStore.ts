@@ -36,7 +36,9 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
   search: async (params?: Partial<SearchParams>) => {
     const { query, filters } = get();
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      return;
+    }
 
     set({ isLoading: true, error: null });
     try {

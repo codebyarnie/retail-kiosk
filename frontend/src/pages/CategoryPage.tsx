@@ -16,7 +16,9 @@ export function CategoryPage() {
   const [selectedSku, setSelectedSku] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
+    if (!slug) {
+      return;
+    }
 
     const fetchCategory = async () => {
       setIsLoading(true);
