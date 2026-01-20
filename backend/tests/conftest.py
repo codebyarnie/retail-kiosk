@@ -13,7 +13,10 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import event
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.sqlite import JSON as SQLiteJSON
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.compiler import compiles
 
 from app.dependencies.database import get_db
 from app.main import app
@@ -21,6 +24,14 @@ from app.models import Base
 
 # Use SQLite in-memory for tests - lightweight and isolated
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+
+# Compile JSONB as JSON for SQLite dialect
+# This allows models using PostgreSQL JSONB to work with SQLite in tests
+@compiles(JSONB, "sqlite")
+def compile_jsonb_for_sqlite(type_, compiler, **kw):
+    """Compile JSONB as JSON when using SQLite."""
+    return compiler.visit_JSON(SQLiteJSON(), **kw)
 
 
 @pytest.fixture(scope="session")
