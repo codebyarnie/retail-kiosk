@@ -9,6 +9,7 @@ from .list_service import ListService
 from .search_service import SearchService
 from .session_service import SessionService
 from .analytics_service import AnalyticsService
+from .embedding_service import EmbeddingService, get_embedding_service
 from .qdrant_service import QdrantService
 
 __all__ = [
@@ -18,5 +19,7 @@ __all__ = [
     "SearchService",
     "SessionService",
     "AnalyticsService",
+    "EmbeddingService",
+    "get_embedding_service",
     "QdrantService",
 ]
