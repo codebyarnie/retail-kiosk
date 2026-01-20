@@ -5,6 +5,7 @@ from typing import Optional
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.strategy_options import _AbstractLoad
 
 from app.models import Category, Product, ProductCategory
 from app.schemas.category import CategoryCreate, CategoryUpdate
@@ -62,7 +63,19 @@ class CategoryService:
 
     async def get_category_tree(self) -> list[Category]:
         """Get full category tree (root categories with nested children)."""
-        return await self.list_categories(active_only=True, root_only=True)
+        # Build recursive loading strategy for nested children up to 5 levels deep
+        children_load: _AbstractLoad = selectinload(Category.children)
+        for _ in range(4):  # Add 4 more levels (total 5 levels)
+            children_load = children_load.selectinload(Category.children)
+
+        query = (
+            select(Category)
+            .options(children_load)
+            .where(Category.is_active == True, Category.parent_id == None)
+            .order_by(Category.display_order, Category.name)
+        )
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
 
     async def get_category_with_products(
         self,

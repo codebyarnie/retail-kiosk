@@ -120,10 +120,10 @@ Based on PRD analysis and current codebase state. Infrastructure is complete, bu
 ## Phase 6: Testing & Documentation
 
 ### 6.1 Backend Tests
-- [ ] Unit tests for services
+- [x] Unit tests for services (ProductService)
 - [x] Integration tests for vector search (EmbeddingService, QdrantService)
-- [ ] Integration tests for routes
-- [ ] Test database fixtures
+- [x] Integration tests for routes (products, categories, lists)
+- [x] Test database fixtures (JSONB/JSON compatibility for SQLite)
 
 ### 6.2 Frontend Tests
 - [x] Test setup infrastructure (vitest, jsdom, jest-dom matchers)
