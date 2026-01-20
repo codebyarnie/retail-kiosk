@@ -82,6 +82,67 @@ class TestUpdateProductEmbeddingsTask:
             assert result["status"] == "updated"
             mock_qdrant.upsert_product.assert_called_once()
 
+    def test_update_embeddings_extracts_category_names_and_ids_from_category_objects(self):
+        """Test that category names and IDs are correctly extracted from Category objects.
+
+        The Product.categories relationship returns Category objects directly (via secondary
+        table), not ProductCategory association objects. This test verifies the fix for
+        correctly accessing .name and .id attributes on Category objects.
+        """
+        with (
+            patch("app.worker.tasks.get_sync_db_session") as mock_get_db,
+            patch("app.worker.tasks.get_embedding_service") as mock_get_emb,
+            patch("app.worker.tasks.QdrantService") as mock_qdrant_cls,
+        ):
+            # Setup mocks
+            mock_session = MagicMock()
+            mock_get_db.return_value.__enter__ = MagicMock(return_value=mock_session)
+            mock_get_db.return_value.__exit__ = MagicMock(return_value=False)
+
+            # Create mock Category objects (not ProductCategory association objects)
+            mock_category_1 = MagicMock()
+            mock_category_1.id = 1
+            mock_category_1.name = "Tools"
+
+            mock_category_2 = MagicMock()
+            mock_category_2.id = 5
+            mock_category_2.name = "Hardware"
+
+            mock_product = MagicMock()
+            mock_product.sku = "TEST-002"
+            mock_product.name = "Power Drill"
+            mock_product.description = "A powerful drill"
+            mock_product.short_description = None
+            mock_product.price = 99.99
+            # product.categories returns Category objects directly
+            mock_product.categories = [mock_category_1, mock_category_2]
+            mock_session.execute.return_value.scalar_one_or_none.return_value = mock_product
+
+            mock_emb_service = MagicMock()
+            mock_emb_service.get_product_text.return_value = "Power Drill. A powerful drill"
+            mock_emb_service.generate_embedding.return_value = [0.1] * 384
+            mock_get_emb.return_value = mock_emb_service
+
+            mock_qdrant = MagicMock()
+            mock_qdrant_cls.return_value = mock_qdrant
+
+            from app.worker.tasks import update_product_embeddings  # noqa: PLC0415
+
+            result = update_product_embeddings("TEST-002")
+
+            assert result["sku"] == "TEST-002"
+            assert result["status"] == "updated"
+
+            # Verify get_product_text was called with category names
+            mock_emb_service.get_product_text.assert_called_once()
+            call_kwargs = mock_emb_service.get_product_text.call_args
+            assert call_kwargs[1]["category_names"] == ["Tools", "Hardware"]
+
+            # Verify upsert_product was called with correct category IDs in payload
+            mock_qdrant.upsert_product.assert_called_once()
+            upsert_kwargs = mock_qdrant.upsert_product.call_args[1]
+            assert upsert_kwargs["payload"]["category_ids"] == [1, 5]
+
 
 class TestCleanupStaleVectorsTask:
     """Tests for cleanup_stale_vectors task."""

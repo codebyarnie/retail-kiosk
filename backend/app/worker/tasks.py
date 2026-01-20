@@ -206,17 +206,16 @@ def _update_single_product_embedding(
     qdrant_service: QdrantService,
 ) -> None:
     """Update embedding for a single product."""
-    # Get category names
-    category_names = [
-        pc.category.name for pc in product.categories if pc.category
-    ]
+    # Get category names - product.categories returns Category objects directly
+    # (many-to-many relationship using secondary table)
+    category_names = [c.name for c in product.categories]
 
     # Generate text and embedding
     text = embedding_service.get_product_text(product, category_names=category_names)
     embedding = embedding_service.generate_embedding(text)
 
-    # Prepare payload
-    category_ids = [pc.category_id for pc in product.categories]
+    # Prepare payload - get category IDs from Category objects
+    category_ids = [c.id for c in product.categories]
     payload = {
         "name": product.name,
         "price": float(product.price) if product.price else 0.0,
