@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorming)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(timeout 15 npm run dev)",
+      "Bash(npm install:*)",
+      "Bash(npm run type-check:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(docker-compose:*)",
+      "Bash(npm run test:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(docker:*)",
+      "Bash(curl:*)",
+      "Bash(alembic upgrade:*)",
+      "Bash(python scripts/seed_data.py:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(taskkill:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(pip install:*)",
+      "Bash(python -c:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(pip show:*)",
+      "Bash(ruff check:*)",
+      "Bash(python -m ruff:*)",
+      "Bash(make test-backend:*)",
+      "Bash(tasklist:*)"
+    ]
+  }
+}
