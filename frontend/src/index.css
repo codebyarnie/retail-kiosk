@@ -1,182 +1,25 @@
-/**
- * Global Styles
- *
- * Base styles and CSS reset for the entire application.
- * These styles provide a consistent foundation across all browsers.
- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* CSS Reset and Base Styles */
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
+/* Custom base styles */
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen w-full;
   }
 }
 
-/* Reset default margins and paddings */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Body styles */
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-/* Typography */
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-h2 {
-  font-size: 2.4em;
-  line-height: 1.2;
-}
-
-h3 {
-  font-size: 1.8em;
-  line-height: 1.3;
-}
-
-/* Links */
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-  transition: color 0.25s;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-/* Interactive elements */
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Light mode button styles */
-@media (prefers-color-scheme: light) {
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-/* Root container */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  width: 100%;
-}
-
-/* Utility classes */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Loading spinner */
-.loading {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top-color: #646cff;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Error message */
-.error {
-  color: #e53e3e;
-  background-color: #fff5f5;
-  border: 1px solid #fc8181;
-  border-radius: 4px;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .error {
-    color: #fc8181;
-    background-color: #2d2020;
-    border-color: #e53e3e;
-  }
-}
-
-/* Success message */
-.success {
-  color: #38a169;
-  background-color: #f0fff4;
-  border: 1px solid #68d391;
-  border-radius: 4px;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .success {
-    color: #68d391;
-    background-color: #1c2e1c;
-    border-color: #38a169;
+/* Touch-friendly utilities */
+@layer utilities {
+  .touch-target {
+    @apply min-h-touch min-w-touch;
   }
 }
