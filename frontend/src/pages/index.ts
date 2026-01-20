@@ -3,3 +3,4 @@ export { HomePage } from './HomePage';
 export { SearchResultsPage } from './SearchResultsPage';
 export { CategoryPage } from './CategoryPage';
 export { ListPage } from './ListPage';
+export { SyncPage } from './SyncPage';

@@ -3,7 +3,13 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from '@/components/layout';
 import { FloatingCart, SessionPrompt } from '@/components/list';
-import { HomePage, SearchResultsPage, CategoryPage, ListPage } from '@/pages';
+import {
+  HomePage,
+  SearchResultsPage,
+  CategoryPage,
+  ListPage,
+  SyncPage,
+} from '@/pages';
 import { useSessionStore, useListStore } from '@/store';
 
 function App() {
@@ -44,6 +50,7 @@ function App() {
           <Route path="/search" element={<SearchResultsPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/list" element={<ListPage />} />
+          <Route path="/sync/:code?" element={<SyncPage />} />
         </Routes>
       </Layout>
 
