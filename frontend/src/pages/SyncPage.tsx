@@ -1,5 +1,5 @@
 // frontend/src/pages/SyncPage.tsx
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QRScanner } from '@/components/qr';
 import { Button } from '@/components/ui';
@@ -17,28 +17,31 @@ export function SyncPage() {
   const [error, setError] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState('');
 
+  const syncList = useCallback(
+    async (shareCode: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const syncedList = await listService.syncFromCode(shareCode);
+        setList(syncedList);
+        // Update session with the synced list
+        if (sessionId) {
+          setSession(sessionId, syncedList.id);
+        }
+        navigate('/list');
+      } catch {
+        setError('Could not find a list with that code. Please try again.');
+        setIsLoading(false);
+      }
+    },
+    [setList, sessionId, setSession, navigate]
+  );
+
   useEffect(() => {
     if (code) {
       syncList(code);
     }
-  }, [code]);
-
-  const syncList = async (shareCode: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const syncedList = await listService.syncFromCode(shareCode);
-      setList(syncedList);
-      // Update session with the synced list
-      if (sessionId) {
-        setSession(sessionId, syncedList.id);
-      }
-      navigate('/list');
-    } catch (err) {
-      setError('Could not find a list with that code. Please try again.');
-      setIsLoading(false);
-    }
-  };
+  }, [code, syncList]);
 
   const handleScan = (data: string) => {
     // Extract code from URL if full URL scanned

@@ -1,5 +1,5 @@
 // frontend/src/components/qr/ShareListModal.tsx
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { QRCodeDisplay } from './QRCodeDisplay';
@@ -22,13 +22,7 @@ export function ShareListModal({
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && !shareData) {
-      generateShareCode();
-    }
-  }, [isOpen]);
-
-  const generateShareCode = async () => {
+  const generateShareCode = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -36,15 +30,23 @@ export function ShareListModal({
         `/lists/${listId}/share`
       );
       setShareData(response.data);
-    } catch (err) {
+    } catch {
       setError('Failed to generate share code');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [listId]);
+
+  useEffect(() => {
+    if (isOpen && !shareData) {
+      generateShareCode();
+    }
+  }, [isOpen, shareData, generateShareCode]);
 
   const getSyncUrl = () => {
-    if (!shareData) return '';
+    if (!shareData) {
+      return '';
+    }
     return `${window.location.origin}/sync/${shareData.share_code}`;
   };
 
