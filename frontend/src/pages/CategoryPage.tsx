@@ -1,7 +1,8 @@
 // frontend/src/pages/CategoryPage.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ProductGrid, ProductModal } from '@/components/product';
+import { ErrorDisplay } from '@/components/ui';
 import { categoryService } from '@/services';
 import { useListStore } from '@/store';
 import type { Category, Product, ProductDetail } from '@/types';
@@ -15,27 +16,26 @@ export function CategoryPage() {
   const { addItem, currentList } = useListStore();
   const [selectedSku, setSelectedSku] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchCategory = useCallback(async () => {
     if (!slug) {
       return;
     }
-
-    const fetchCategory = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await categoryService.getCategoryBySlug(slug);
-        setCategory(data.category);
-        setProducts(data.products.items);
-      } catch {
-        setError('Failed to load category');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategory();
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await categoryService.getCategoryBySlug(slug);
+      setCategory(data.category);
+      setProducts(data.products.items);
+    } catch {
+      setError('Failed to load category');
+    } finally {
+      setIsLoading(false);
+    }
   }, [slug]);
+
+  useEffect(() => {
+    fetchCategory();
+  }, [fetchCategory]);
 
   const handleAddToList = (product: Product | ProductDetail) => {
     if (currentList) {
@@ -61,9 +61,11 @@ export function CategoryPage() {
 
       {/* Error state */}
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-          {error}
-        </div>
+        <ErrorDisplay
+          title="Category Not Found"
+          message="We couldn't load this category. Please try again."
+          onRetry={fetchCategory}
+        />
       )}
 
       {/* Products grid */}

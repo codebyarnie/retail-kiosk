@@ -1,13 +1,15 @@
 // frontend/src/pages/SearchResultsPage.tsx
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { SearchBar } from '@/components/search';
 import { ProductGrid, ProductModal } from '@/components/product';
+import { ErrorDisplay, EmptyState } from '@/components/ui';
 import { useSearchStore, useListStore } from '@/store';
 import type { Product, ProductDetail } from '@/types';
 
 export function SearchResultsPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const query = searchParams.get('q') || '';
   const { results, isLoading, error, setQuery, search } = useSearchStore();
   const { addItem, currentList } = useListStore();
@@ -55,18 +57,45 @@ export function SearchResultsPage() {
 
       {/* Error state */}
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-          {error}
-        </div>
+        <ErrorDisplay
+          message="Failed to load search results. Please try again."
+          onRetry={() => search()}
+        />
+      )}
+
+      {/* Empty state */}
+      {!isLoading && !error && products.length === 0 && query && (
+        <EmptyState
+          icon={
+            <svg
+              className="w-24 h-24"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          }
+          title="No results found"
+          description={`We couldn't find any products matching "${query}"`}
+          action={{ label: 'Go Home', onClick: () => navigate('/') }}
+        />
       )}
 
       {/* Results grid */}
-      <ProductGrid
-        products={products}
-        onAddToList={handleAddToList}
-        onProductClick={handleProductClick}
-        isLoading={isLoading}
-      />
+      {!error && (products.length > 0 || isLoading) && (
+        <ProductGrid
+          products={products}
+          onAddToList={handleAddToList}
+          onProductClick={handleProductClick}
+          isLoading={isLoading}
+        />
+      )}
 
       {/* Product modal */}
       <ProductModal
