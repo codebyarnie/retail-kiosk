@@ -11,6 +11,10 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from loguru import logger
+
+from app.config import settings
+from app.dependencies.database import close_db, init_db
 
 
 @asynccontextmanager
@@ -22,34 +26,44 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Redis connections, and other resources.
     """
     # Startup: Initialize connections and resources
-    # TODO: Initialize database connection pool
-    # TODO: Initialize Redis connection
-    # TODO: Initialize Qdrant client
+    logger.info("Starting up Retail Kiosk API...")
+
+    # Initialize database connection pool
+    try:
+        await init_db()
+        logger.info("Database connection pool initialized")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+        raise
+
     yield
+
     # Shutdown: Clean up connections and resources
-    # TODO: Close database connections
-    # TODO: Close Redis connections
-    # TODO: Close Qdrant client
+    logger.info("Shutting down Retail Kiosk API...")
+
+    # Close database connections
+    await close_db()
+    logger.info("Database connections closed")
 
 
 # Create FastAPI application instance
 app = FastAPI(
-    title="Retail Kiosk API",
+    title=settings.app_name,
     description="Backend service for the Retail Kiosk application",
-    version="0.1.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json",
+    version=settings.app_version,
+    docs_url="/docs" if settings.enable_docs else None,
+    redoc_url="/redoc" if settings.enable_docs else None,
+    openapi_url="/openapi.json" if settings.enable_docs else None,
     lifespan=lifespan,
 )
 
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Vite and common dev ports
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_origins,
+    allow_credentials=settings.cors_allow_credentials,
+    allow_methods=settings.cors_allow_methods,
+    allow_headers=settings.cors_allow_headers,
 )
 
 
@@ -67,7 +81,8 @@ async def health_check() -> JSONResponse:
         content={
             "status": "healthy",
             "service": "retail-kiosk-backend",
-            "version": "0.1.0",
+            "version": settings.app_version,
+            "environment": settings.environment,
         },
     )
 
@@ -83,15 +98,18 @@ async def root() -> dict[str, str]:
     """
     return {
         "message": "Retail Kiosk API",
-        "version": "0.1.0",
-        "docs": "/api/docs",
+        "version": settings.app_version,
+        "docs": "/docs",
         "health": "/health",
     }
 
 
-# TODO: Include routers from app.routes
-# Example:
-# from app.routes import products, inventory, transactions
-# app.include_router(products.router, prefix="/api/products", tags=["Products"])
-# app.include_router(inventory.router, prefix="/api/inventory", tags=["Inventory"])
-# app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
+# Import and include routers
+from app.routes import admin_router, analytics, categories, lists, products, search
+
+app.include_router(products.router, prefix="/api", tags=["Products"])
+app.include_router(search.router, prefix="/api", tags=["Search"])
+app.include_router(lists.router, prefix="/api", tags=["Lists"])
+app.include_router(categories.router, prefix="/api", tags=["Categories"])
+app.include_router(analytics.router, prefix="/api", tags=["Analytics"])
+app.include_router(admin_router, prefix="/api")
