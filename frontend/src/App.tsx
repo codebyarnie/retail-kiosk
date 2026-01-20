@@ -1,42 +1,56 @@
-import { useState } from 'react'
-import './App.css'
-
-/**
- * Main Application Component
- *
- * This is the root component of the Retail Kiosk application.
- * It will be expanded to include routing, state management, and
- * the main application layout.
- */
+// frontend/src/App.tsx
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Layout } from '@/components/layout';
+import { FloatingCart, SessionPrompt } from '@/components/list';
+import { HomePage, SearchResultsPage, CategoryPage, ListPage } from '@/pages';
+import { useSessionStore, useListStore } from '@/store';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { sessionId, listId, isSessionExpired, setShowContinuePrompt, updateLastActive } = useSessionStore();
+  const { fetchList } = useListStore();
+
+  // Check for existing session on mount
+  useEffect(() => {
+    if (sessionId && listId) {
+      if (isSessionExpired()) {
+        setShowContinuePrompt(true);
+      } else {
+        fetchList(listId);
+      }
+    }
+  }, [sessionId, listId, isSessionExpired, setShowContinuePrompt, fetchList]);
+
+  // Update last active on user interaction
+  useEffect(() => {
+    const handleActivity = () => updateLastActive();
+
+    window.addEventListener('click', handleActivity);
+    window.addEventListener('keydown', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+
+    return () => {
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+    };
+  }, [updateLastActive]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Retail Kiosk</h1>
-        <p>Modern Point-of-Sale System</p>
-      </header>
+    <>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchResultsPage />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="/list" element={<ListPage />} />
+        </Routes>
+      </Layout>
 
-      <main className="App-main">
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-
-        <div className="info">
-          <p className="text-muted">
-            Built with React + TypeScript + Vite
-          </p>
-        </div>
-      </main>
-    </div>
-  )
+      <FloatingCart />
+      <SessionPrompt />
+    </>
+  );
 }
 
-export default App
+export default App;
