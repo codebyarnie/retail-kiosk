@@ -129,7 +129,7 @@ Based on PRD analysis and current codebase state. Infrastructure is complete, bu
 - [x] Test setup infrastructure (vitest, jsdom, jest-dom matchers)
 - [x] Browser API mocks (localStorage, matchMedia)
 - [ ] Component unit tests
-- [ ] E2E tests with Playwright
+- [x] E2E tests with Playwright
 
 ---
 
