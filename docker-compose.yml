@@ -47,10 +47,81 @@ services:
     environment:
       QDRANT__SERVICE__GRPC_PORT: "6334"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/6333'"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - retail-kiosk-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: retail-kiosk-backend
+    environment:
+      RETAIL_KIOSK_DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/retail_kiosk
+      RETAIL_KIOSK_REDIS_URL: redis://redis:6379/0
+      RETAIL_KIOSK_CELERY_BROKER_URL: redis://redis:6379/1
+      RETAIL_KIOSK_CELERY_RESULT_BACKEND: redis://redis:6379/1
+      RETAIL_KIOSK_QDRANT_HOST: qdrant
+      RETAIL_KIOSK_QDRANT_PORT: 6333
+      RETAIL_KIOSK_CORS_ORIGINS: '["http://localhost:3000","http://localhost:5173","http://localhost:80","http://localhost","http://localhost:9090","http://127.0.0.1:9090"]'
+      RETAIL_KIOSK_DEBUG: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retail-kiosk-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: retail-kiosk-frontend
+    ports:
+      - "9090:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retail-kiosk-network
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: retail-kiosk-worker
+    environment:
+      RETAIL_KIOSK_DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/retail_kiosk
+      RETAIL_KIOSK_REDIS_URL: redis://redis:6379/0
+      RETAIL_KIOSK_CELERY_BROKER_URL: redis://redis:6379/1
+      RETAIL_KIOSK_CELERY_RESULT_BACKEND: redis://redis:6379/1
+      RETAIL_KIOSK_QDRANT_HOST: qdrant
+      RETAIL_KIOSK_QDRANT_PORT: 6333
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
     networks:
       - retail-kiosk-network
 
