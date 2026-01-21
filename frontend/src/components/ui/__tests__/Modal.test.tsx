@@ -74,7 +74,9 @@ describe('Modal', () => {
     const backdrop = document.querySelector('.bg-black\\/50');
     expect(backdrop).toBeInTheDocument();
 
-    await user.click(backdrop!);
+    if (backdrop) {
+      await user.click(backdrop);
+    }
 
     expect(handleClose).toHaveBeenCalledTimes(1);
   });

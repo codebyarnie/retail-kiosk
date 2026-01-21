@@ -17,7 +17,9 @@
     "dist",
     "node_modules",
     ".eslintrc.json",
-    "vite.config.ts"
+    "vite.config.ts",
+    "playwright.config.ts",
+    "e2e/**"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
