@@ -24,8 +24,8 @@ export function CategoryPage() {
     setError(null);
     try {
       const data = await categoryService.getCategoryBySlug(slug);
-      setCategory(data.category);
-      setProducts(data.products.items);
+      setCategory(data);
+      setProducts(data.products);
     } catch {
       setError('Failed to load category');
     } finally {

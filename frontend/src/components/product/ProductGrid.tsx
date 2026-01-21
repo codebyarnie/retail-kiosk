@@ -26,7 +26,7 @@ export function ProductGrid({
     );
   }
 
-  if (products.length === 0) {
+  if (!products || products.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
         <svg

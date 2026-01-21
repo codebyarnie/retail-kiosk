@@ -1,6 +1,6 @@
 // frontend/src/services/categoryService.ts
 import api from './api';
-import type { Category, CategoryTree, ProductListResponse } from '@/types';
+import type { Category, CategoryTree, CategoryWithProducts } from '@/types';
 
 export const categoryService = {
   async getCategories(): Promise<Category[]> {
@@ -13,10 +13,8 @@ export const categoryService = {
     return response.data;
   },
 
-  async getCategoryBySlug(
-    slug: string
-  ): Promise<{ category: Category; products: ProductListResponse }> {
-    const response = await api.get(`/categories/${slug}`);
+  async getCategoryBySlug(slug: string): Promise<CategoryWithProducts> {
+    const response = await api.get<CategoryWithProducts>(`/categories/${slug}`);
     return response.data;
   },
 };
